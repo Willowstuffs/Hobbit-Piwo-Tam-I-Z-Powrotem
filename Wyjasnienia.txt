@@ -1,0 +1,101 @@
+basefordfulkersontesty.cpp zawiera test działania algorytmu Forda Fulkersona w maxflow.cpp i maxflow.h
+Wynik z testu wyniósł 23, zgodnie z wartością oczekiwaną.
+
+wierzcholkitesty.cpp objaśnienie działania:
+
+Pole 2 dostarcza 10 jednostek → browar 4
+Pole 3 dostarcza 8 jednostek → browar 5
+Browary przepuszczają wszystko dalej (duża przepustowość)
+
+Karczma 6 chce 9 jednostek, karczma 7 chce 16 → łącznie 25 jednostek zapotrzebowania
+
+Ale mamy tylko 18 jednostek jęczmienia (10 + 8), więc maksymalny przepływ nie może przekroczyć 18
+
+Ścieżki do karczm mają wystarczającą przepustowość, więc najwęższe gardło to dostępny surowiec
+
+Ford-Fulkerson wykorzystuje 9 jednostek na karczmę 6, 8 jednostek na karczmę 7 → 17 jednostek całkowitego przepływu, bo więcej nie da się dostarczyć w tym układzie. Zatem wynik to 17
+
+Pliki:
+Plik maxflow.h
+
+Deklaruje klasę Graf, która:
+
+    Przechowuje:
+
+        V: liczba wierzchołków
+
+        przepustowosc: macierz przepustowości [u][v]
+
+        sasiedzi: lista sąsiadów – do BFS
+
+    Udostępnia metody:
+
+        dodajKrawedz(u, v, przepustowosc)
+
+        fordFulkerson(zrodlo, ujscie) – główny algorytm
+
+        bfs(...) – wyszukuje ścieżki powiększające
+		
+Plik maxflow.cpp
+
+Graf::Graf(int il_wierzcholkow)
+
+    Tworzy pusty graf z V wierzchołkami
+
+    Inicjalizuje macierze i wektory
+
+dodajKrawedz(u, v, przepustowosc)
+
+    Dodaje przepustowość u→v i symetryczną krawędź rezydualną v→u (tylko jako sąsiad)
+
+bfs(...)
+
+    Przeszukuje graf wszerz, szukając ścieżki powiększającej
+
+    Zwraca true, jeśli da się dotrzeć od źródła do ujścia
+
+fordFulkerson(...)
+
+    Działa iteracyjnie:
+
+        Szuka ścieżki powiększającej (BFS)
+
+        Znajduje minimum przepustowości w tej ścieżce
+
+        Zmniejsza przepustowość krawędzi
+
+        Zwiększa przepustowość rezydualnej
+
+    Powtarza, aż nie znajdzie kolejnej ścieżki
+	
+    Zwraca łączny przepływ
+	
+Plik tests.cpp
+Enum i struktura Wierzcholek
+
+    Przechowują dane logiczne o wierzchołkach: ID, typ, oraz zasób (produkcja lub zapotrzebowanie)
+
+Funkcja budujGraf(...)
+
+    Tworzy połączenia:
+
+        super źródło → pola
+
+        karczmy → super ujście
+
+        dowolne inne drogi (między polami/browarami/karczmami)
+
+main()
+
+    Tworzy 8-wierzchołkowy graf
+
+    Wczytuje (na razie hardcoded jako proof of concept) dane wejściowe
+
+    Wywołuje algorytm (od super źródła do super ujścia 0,1) i wypisuje wynik
+	
+//todo po akceptacji
+tak:
+- rozszerzenie, dalsze testy, walidacja przepustowości i spójności
+maybe:
+jakie drogi użyto w przepływie?
+wypisywanie macierzy po zakończeniu.
